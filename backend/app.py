@@ -22,11 +22,8 @@ from sklearn.utils import resample
 from flask import request, redirect, url_for, render_template
 from datetime import datetime
 
-
-# Install MySQL support
 pymysql.install_as_MySQLdb()
 
-# Initialize Flask app
 app = Flask(__name__)
 
 # Enable CORS for all routes
@@ -88,17 +85,6 @@ class FileVersion(db.Model):
     file_id = db.Column(db.Integer, db.ForeignKey('file.id'), nullable=False)
     version_data = db.Column(db.LargeBinary, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-
-
-# new_team = TeamCollaboration(
-#     team_name=team_name,
-#     no_of_members=no_of_members,
-#     member_names=member_names,
-#     member_emails=member_emails,
-#     user_id=user_id,
-#     file_id=latest_file.id
-# )
-
 
 
 @app.route('/profile', methods=['GET'])
@@ -243,9 +229,11 @@ def upload_file():
 
         if not filename:
             return jsonify({"error": "Invalid file"}), 400
+            
 
         # Save file to database
         new_file = File(name=filename, data=file_data)
+        print("File object attributes:", new_file.__dict__)  # Debug
         db.session.add(new_file)
         db.session.commit()
 
@@ -281,7 +269,6 @@ def upload_file():
     except Exception as e:
         print("Error in /upload:", traceback.format_exc())  # Detailed error log
         return jsonify({"error": str(e)}), 500
-
 
 
 #function 2
@@ -451,12 +438,12 @@ def standardize_data():
         print("Error in /data_standardization:", traceback.format_exc())
         return jsonify({"error": str(e)}), 500
 
-
+#function 5 
 @app.route('/datastandardization', methods=['GET'])
 def data_standardization_page():
     return render_template('datastandardization.html')
 
-#function 5 automated transformation 
+#function 6 automated transformation 
 @app.route('/transform_data', methods=['POST'])
 def transform_data():
     try:
@@ -496,128 +483,61 @@ def transform_data():
         print("Error in /transform_data:", traceback.format_exc())
         return jsonify({"error": str(e)}), 500
 
-# balance check function
-@app.route('/check_balance', methods=['POST'])
-def check_balance():
-    try:
-        data = request.get_json()
-        file_id = data.get("file_id")
+# # balance check function
+# @app.route('/check_balance', methods=['POST'])
+# def check_balance():
+#     try:
+#         data = request.get_json()
+#         file_id = data.get("file_id")
 
-        if not file_id:
-            return jsonify({"error": "No file_id provided in request."}), 400
+#         if not file_id:
+#             return jsonify({"error": "No file_id provided in request."}), 400
 
-        file_record = File.query.get(file_id)
-        if not file_record:
-            return jsonify({"error": "Dataset not found with the given file_id."}), 404
+#         file_record = File.query.get(file_id)
+#         if not file_record:
+#             return jsonify({"error": "Dataset not found with the given file_id."}), 404
 
-        filename = file_record.name
-        file_data = file_record.data
+#         filename = file_record.name
+#         file_data = file_record.data
 
-        # Load file into DataFrame
-        if filename.endswith('.csv'):
-            df = pd.read_csv(io.BytesIO(file_data))
-        elif filename.endswith('.xlsx'):
-            df = pd.read_excel(io.BytesIO(file_data))
-        else:
-            return jsonify({"error": "Unsupported file format"}), 400
+#         # Load file into DataFrame
+#         if filename.endswith('.csv'):
+#             df = pd.read_csv(io.BytesIO(file_data))
+#         elif filename.endswith('.xlsx'):
+#             df = pd.read_excel(io.BytesIO(file_data))
+#         else:
+#             return jsonify({"error": "Unsupported file format"}), 400
 
-        # Check if dataset is empty
-        if df.empty:
-            return jsonify({"error": "The uploaded file is empty."}), 400
+#         # Check if dataset is empty
+#         if df.empty:
+#             return jsonify({"error": "The uploaded file is empty."}), 400
 
-        # Detect target column (categorical or low unique values)
-        potential_targets = df.select_dtypes(include=['object', 'category']).columns.tolist()
-        if not potential_targets:
-            potential_targets = [col for col in df.columns if df[col].nunique() <= 10]
+#         # Detect target column (categorical or low unique values)
+#         potential_targets = df.select_dtypes(include=['object', 'category']).columns.tolist()
+#         if not potential_targets:
+#             potential_targets = [col for col in df.columns if df[col].nunique() <= 10]
 
-        if not potential_targets:
-            return jsonify({"error": "No suitable target column found to check for balance."}), 400
+#         if not potential_targets:
+#             return jsonify({"error": "No suitable target column found to check for balance."}), 400
 
-        target_col = potential_targets[-1]  # Choose the last one
-        class_counts = df[target_col].value_counts()
-        total = class_counts.sum()
-        balance_ratio = (class_counts / total).round(3).to_dict()
+#         target_col = potential_targets[-1]  # Choose the last one
+#         class_counts = df[target_col].value_counts()
+#         total = class_counts.sum()
+#         balance_ratio = (class_counts / total).round(3).to_dict()
 
-        # Determine if dataset is balanced (no single class dominates > 70%)
-        is_balanced = all((count / total) <= 0.7 for count in class_counts)
+#         # Determine if dataset is balanced (no single class dominates > 70%)
+#         is_balanced = all((count / total) <= 0.7 for count in class_counts)
 
-        return jsonify({
-            "message": "Balance check complete.",
-            "target_column": target_col,
-            "class_distribution": balance_ratio,
-            "is_balanced": is_balanced
-        })
-
-    except Exception as e:
-        print("Error in /check_balance:", traceback.format_exc())
-        return jsonify({"error": str(e)}), 500
-
-#function collaborative version
-# @app.route('/join_dataset', methods=['POST'])
-# def join_dataset():
-#     data = request.get_json()
-#     file_id = data.get('file_id')
-#     role = data.get('role', 'editor')
-
-#     if 'user_id' not in session:
-#         return jsonify({"error": "Login required"}), 401
-
-#     user_id = session['user_id']
-#     existing = CollaborativeFile.query.filter_by(user_id=user_id, file_id=file_id).first()
-#     if existing:
-#         return jsonify({"message": "Already joined"})
-
-#     collab = CollaborativeFile(user_id=user_id, file_id=file_id, role=role)
-#     db.session.add(collab)
-#     db.session.commit()
-#     return jsonify({"message": "Joined dataset successfully"})
-
-# @app.route('/save_version', methods=['POST'])
-# def save_version():
-#     user_id = session.get('user_id')
-#     if not user_id:
-#         return jsonify({"error": "Not logged in"}), 401
-
-#     file_id = request.json.get("file_id")
-#     file = File.query.get(file_id)
-#     if not file:
-#         return jsonify({"error": "File not found"}), 404
-
-#     version = FileVersion(file_id=file.id, user_id=user_id, version_data=file.data)
-#     db.session.add(version)
-#     db.session.commit()
-
-#     return jsonify({"message": f"Version saved by user {user_id}", "version_id": version.id})
-
-# @app.route('/revert_version', methods=['POST'])
-# def revert_version():
-#     data = request.get_json()
-#     version_id = data.get('version_id')
-    
-#     version = FileVersion.query.get(version_id)
-#     if not version:
-#         return jsonify({"error": "Version not found"}), 404
-
-#     file = File.query.get(version.file_id)
-#     file.data = version.version_data
-#     db.session.commit()
-
-#     return jsonify({"message": f"Reverted to version {version_id}"})
-
-# @app.route('/get_collaborators/<int:file_id>', methods=['GET'])
-# def get_collaborators(file_id):
-#     collaborators = CollaborativeFile.query.filter_by(file_id=file_id).all()
-#     response = []
-#     for collab in collaborators:
-#         user = User.query.get(collab.user_id)
-#         response.append({
-#             "username": user.username,
-#             "role": collab.role,
-#             "last_edit": collab.last_edit
+#         return jsonify({
+#             "message": "Balance check complete.",
+#             "target_column": target_col,
+#             "class_distribution": balance_ratio,
+#             "is_balanced": is_balanced
 #         })
-#     return jsonify({"collaborators": response})
 
-#save collaboration
+#     except Exception as e:
+#         print("Error in /check_balance:", traceback.format_exc())
+#         return jsonify({"error": str(e)}), 500
 
 @app.route('/save_collaboration', methods=['POST'])
 def save_collaboration():
@@ -627,11 +547,14 @@ def save_collaboration():
         member_names = request.form.get('member_names')
         member_emails = request.form.get('member_emails')
 
-        user_id = session.get('user_id')
+        print("Received:", team_name, no_of_members, member_names, member_emails)
+
+        # Use dummy user_id for now or fetch from session
+        user_id = session.get('user_id', 1)
         latest_file = File.query.order_by(File.id.desc()).first()
 
-        if not user_id or not latest_file:
-            return "User or file context missing", 400
+        if not latest_file:
+            return jsonify({"error": "No file found"}), 400
 
         new_team = TeamCollaboration(
             team_name=team_name,
@@ -646,18 +569,43 @@ def save_collaboration():
         db.session.add(new_team)
         db.session.commit()
 
-        return redirect(url_for('collaboration_page'))
+        return jsonify({"message": "Team collaboration saved successfully!"}), 200
 
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return "Internal Server Error", 500
-
+        return jsonify({"error": "Internal Server Error"}), 500
 
 @app.route('/collaboration_page', methods=['GET'])
 def collaboration_page():
+    success = request.args.get('success', 'false') == 'true'
+    error = request.args.get('error', None)
+    return render_template('collaboration.html', success=success, error=error)
+
+# Add a route to serve collaborative.html for form access
+@app.route('/collaborative_form', methods=['GET'])
+def collaborative_form():
+    return render_template('collaborative.html')
+
+@app.route('/members')
+def show_members_page():
+    return render_template('members.html')  # ✅ renders from templates folder
+
+@app.route('/api/members', methods=['GET'])
+def get_team_members_api():
     teams = TeamCollaboration.query.all()
-    return render_template('collaboration.html', teams=teams)
+    data = []
+    for team in teams:
+        data.append({
+            'team_name': team.team_name,
+            'no_of_members': team.no_of_members,
+            'member_names': team.member_names.split(','),
+            'member_emails': team.member_emails.split(','),
+            'created_at': team.created_at.strftime('%Y-%m-%d %H:%M'),
+            'file_name': team.target_file.name  # 👈 Add file name here
+        })
+    return jsonify(data)
+
 
 # Run Flask App
 if __name__ == '__main__':

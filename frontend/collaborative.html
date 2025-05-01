@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Collaborative Team Form - IntelliCleanse</title>
   <style>
@@ -13,7 +13,6 @@
       display: flex;
       justify-content: center;
     }
-
     .form-container {
       background: white;
       border-radius: 12px;
@@ -21,21 +20,19 @@
       width: 500px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
-
     h2 {
       text-align: center;
       color: #2c3e50;
     }
-
     label {
       display: block;
       margin-bottom: 5px;
       font-weight: 600;
     }
-
     input[type="text"],
     input[type="number"],
-    input[type="email"] {
+    input[type="email"],
+    input[type="password"] {
       width: 100%;
       padding: 10px;
       margin-bottom: 20px;
@@ -43,7 +40,6 @@
       border-radius: 8px;
       font-size: 15px;
     }
-
     button {
       background-color: #2980b9;
       color: white;
@@ -54,30 +50,42 @@
       border-radius: 8px;
       cursor: pointer;
     }
-
     button:hover {
       background-color: #1c6ea4;
     }
-
-    .success {
-      color: green;
-      font-weight: bold;
+    .message {
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 8px;
       text-align: center;
+      display: none;
     }
-
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+    }
     .error {
-      color: red;
-      font-weight: bold;
-      text-align: center;
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    #login-form {
+      margin-top: 30px;
+      display: none;
+    }
+    #login-toggle {
+      margin-top: 20px;
+      background-color: #27ae60;
+    }
+    #login-toggle:hover {
+      background-color: #219150;
     }
   </style>
 </head>
 <body>
   <div class="form-container">
     <h2>Team Collaboration Details</h2>
-    <form method="POST" action="http://localhost:5000/save_collaboration">
-
-
+    <div id="message" class="message"></div>
+    <form id="collaboration-form">
       <label for="team_name">Team Name</label>
       <input type="text" id="team_name" name="team_name" required>
 
@@ -92,6 +100,78 @@
 
       <button type="submit">Submit</button>
     </form>
+
+    <!-- Toggle Login Form Button -->
+    <button id="login-toggle">Login</button>
+
+    <!-- Hidden Login Form -->
+    <form id="login-form">
+      <h3>Login</h3>
+      <input type="email" id="login-email" placeholder="Email" required>
+      <input type="password" id="login-password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
   </div>
+
+  <script>
+    // Collaboration form submission
+    document.getElementById('collaboration-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const messageDiv = document.getElementById('message');
+      messageDiv.style.display = 'none';
+      messageDiv.classList.remove('success', 'error');
+
+      const formData = new FormData(event.target);
+
+      try {
+        const response = await fetch('http://localhost:5000/save_collaboration', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          window.location.href = 'collaboration.html';
+        } else {
+          const errorMessage = encodeURIComponent(result.error || 'Failed to save collaboration.');
+          window.location.href = `http://localhost:5000/collaboration_page?success=false&error=${errorMessage}`;
+        }
+      } catch (error) {
+        const errorMessage = encodeURIComponent('Unable to connect to the server.');
+        window.location.href = `http://localhost:5000/collaboration_page?success=false&error=${errorMessage}`;
+      }
+    });
+
+    // Toggle login form
+    document.getElementById("login-toggle").addEventListener("click", () => {
+      const loginForm = document.getElementById("login-form");
+      loginForm.style.display = loginForm.style.display === "none" ? "block" : "none";
+    });
+
+    // Login form submission
+    document.getElementById("login-form").addEventListener("submit", async function (event) {
+      event.preventDefault();
+      const email = document.getElementById("login-email").value;
+      const password = document.getElementById("login-password").value;
+
+      try {
+        const response = await fetch("http://localhost:5000/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+
+        const result = await response.json();
+        alert(result.message);
+
+        if (response.ok) {
+          window.location.href = "collaboration.html";
+        }
+      } catch (err) {
+        alert("Login failed. Please try again.");
+      }
+    });
+  </script>
 </body>
 </html>

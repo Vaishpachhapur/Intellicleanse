@@ -3,15 +3,80 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Team Saved</title>
- </head>
+  <title>Team Collaboration Status</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      min-height: 100vh;
+      background: #f4f8fb;
+    }
+    .sidebar {
+      width: 220px;
+      background-color: #2c3e50;
+      color: white;
+      padding-top: 20px;
+      flex-shrink: 0;
+      height: 100vh;
+    }
+    .sidebar a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 15px 20px;
+      border-bottom: 1px solid #34495e;
+    }
+    .sidebar a:hover {
+      background-color: #34495e;
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .message-box {
+      background-color: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .success {
+      color: #155724;
+      background-color: #d4edda;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .error {
+      color: #721c24;
+      background-color: #f8d7da;
+      padding: 10px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
 <body>
-  <div class="message">
-    {% if success %}
-      <h2>✅ Team collaboration saved successfully!</h2>
-    {% else %}
-      <h2>⚠️ Something went wrong!</h2>
-    {% endif %}
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <a href="members.html">Members</a>
+    <a href="/datasets">Datasets</a>
+    <a href="/cleaning">Data Cleansing</a>
+    <a href="index.html">Logout</a>
   </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="message-box">
+      <h2 id="message">Welcome to Collaboration- where you can work with collaboration</h2>
+    </div>
+  </div>
+
+  
 </body>
 </html>

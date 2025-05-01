@@ -3,63 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Upload Dataset</title>
+  <title>Data Cleansing - IntelliCleanse</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
   <style>
-    /* Global and Sidebar Styles */
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 0;
       display: flex;
-      background-color: #ecf0f1;
+      background-color: #f4f8fb;
+      min-height: 100vh;
     }
-    nav {
-      width: 250px;
+
+    .sidebar {
+      width: 220px;
       background-color: #2c3e50;
       color: white;
-      padding-top: 30px;
-      position: fixed;
+      padding-top: 20px;
+      flex-shrink: 0;
       height: 100vh;
-      transition: 0.3s;
     }
-    nav a {
+
+    .sidebar a {
       display: block;
       color: white;
-      padding: 15px;
       text-decoration: none;
-      font-size: 16px;
+      padding: 15px 20px;
+      border-bottom: 1px solid #34495e;
     }
-    nav a:hover,
-    nav a.active {
+
+    .sidebar a:hover {
       background-color: #34495e;
     }
-    .logout-btn {
-      background: none;
-      border: none;
-      color: white;
-      padding: 15px;
-      font-size: 16px;
-      width: 100%;
-      text-align: left;
-      cursor: pointer;
-    }
-    .logout-btn:hover {
-      background-color: #e74c3c;
-    }
-    
-    /* Content Styles */
-    .content {
-      margin-left: 260px;
-      padding: 20px;
-      width: calc(100% - 260px);
+
+    .main-content {
+      flex: 1;
+      padding: 40px;
       background-color: white;
     }
-    h2,
-    h3 {
+
+    h2, h3 {
       color: #2c3e50;
     }
+
     button {
       padding: 10px;
       background-color: #2c3e50;
@@ -67,10 +54,14 @@
       border: none;
       cursor: pointer;
       border-radius: 5px;
+      margin-top: 10px;
+      margin-right: 10px;
     }
+
     button:hover {
       background-color: #34495e;
     }
+
     .table-container,
     .summary-container {
       max-height: 300px;
@@ -78,82 +69,118 @@
       border: 1px solid #ddd;
       padding: 10px;
       background-color: #f9f9f9;
+      margin-top: 10px;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
     }
-    th,
-    td {
+
+    th, td {
       border: 1px solid #ddd;
       padding: 8px;
       text-align: left;
     }
+
     th {
       background-color: #f2f2f2;
     }
+
     canvas {
       margin-top: 20px;
     }
-    /* Style for NEXT button link */
+
     .next-btn a {
       text-decoration: none;
-      color: #f9f9f9;
+      color: #fff;
     }
   </style>
 </head>
 <body>
   <!-- Sidebar -->
-  <nav id="sidebar">
-    <a href="balance.html">Balance</a>
-    <a href="upload.html" onclick="loadContent('upload.html')">Data Upload, Preview, and Profiling</a>
-    <a href="cleaning.html">Redundancy and Consistency Cleaning</a>
-    <a href="outlier.html" class="active">Outlier Detection and Management</a>
-    <a href="datastandardization.html">Data Standardization and Validation</a>
-    <a href="transformation.html">Automated Data Transformation Pipelines</a>
-    <a href="profile.html">Profile</a>
-    <a href="collaborative.html">Collaborate </a>
+  <div class="sidebar">
+    <a href="members.html">Members</a>
+    <a href="collaboration_cleaning.html">Data Cleansing</a>
     <a href="index.html">Logout</a>
-</nav>
-
-  <!-- Main Content Area -->
-  <div class="content">
-    <h2>Upload Dataset</h2>
-    <label for="fileInput">Choose a file:</label>
-    <input type="file" id="fileInput" />
-    <button onclick="uploadFile()">Upload</button>
-    <button onclick="downloadReport()">Download Report</button>
-
-    <h3>Upload Status:</h3>
-    <p id="message"></p>
-
-    <h3>Dataset Preview:</h3>
-    <div class="table-container">
-      <table id="dataPreview"></table>
-    </div>
-
-    <h3>Summary Report:</h3>
-    <div class="summary-container">
-      <pre id="summaryReport"></pre>
-    </div>
-
-    <h3>Visualizations:</h3>
-    <canvas id="chart"></canvas>
-    <button onclick="downloadImage()">Download Chart as Image</button>
-    <button class="next-btn">
-      <a href="cleaning.html">NEXT</a>
-    </button>
   </div>
 
+<!-- New Buttons -->
+<button width:500 h onclick="togglePreviewSection()">Preview and Profile</button>
+<!-- <button onclick="toggleOutlierSection()">Outlier Detection</button> -->
+
+<!-- Section for Upload (Initially Hidden) -->
+<d<h2>Upload Dataset for Collaborative Cleaning</h2>
+  <label for="fileInput">Choose a file:</label>
+  <input type="file" id="fileInput" />
+  <button onclick="uploadFile()">Upload</button>
+  <button onclick="downloadReport()">Download Report</button>
+
+  <h3>Upload Status:</h3>
+  <p id="message"></p>
+
+  <h3>Dataset Preview:</h3>
+  <div class="table-container">
+    <table id="dataPreview"></table>
+  </div>
+
+  <h3>Summary Report:</h3>
+  <div class="summary-container">
+    <pre id="summaryReport"></pre>
+  </div>
+
+  <h3>Visualizations:</h3>
+  <canvas id="chart"></canvas>
+  <button onclick="downloadImage()">Download Chart as Image</button>
+</div>
+
+<!-- Section for Outlier Detection (Initially Hidden) -->
+<!-- <<div id="outlierSection" style="display: none; margin-top: 20px;">
+    <h1>Outlier Detection and Management</h1>
+  
+
+    <form id="uploadOutlierForm" enctype="multipart/form-data">
+        <label for="outlierFileInput">Upload a CSV or Excel file:</label>
+        <input type="file" id="outlierFileInput" name="file" accept=".csv, .xlsx" required>
+        <button type="submit">Upload File</button>
+    </form>
+ 
+   
+   <div id="outlierInfo" style="display:none;">
+        <h2>Outlier Detection Results</h2>
+        <p id="outlierCount"></p>
+        <h3>Visualizations:</h3>
+        <img id="outlierPlot" src="" alt="Outlier Visualization" style="max-width: 100%; height: auto;" />
+        <button id="downloadBtn" style="display:none;" onclick="downloadOutlierImage()">Download Visualization</button>
+    </div>
+  
+    <button class="next-btn"><a href="datastandardization.html">NEXT</a></button>
+  </div> -->
+  
+
+
   <script>
-    function logout() {
-      fetch('index.html', { method: 'POST' })
-        .then(response => response.json())
-        .then(data => {
-          alert(data.message);
-          window.location.href = '/login';
-        });
-    }
+
+// Function to download the image
+function downloadImage() {
+            const imgData = document.getElementById('outlierPlot').src;
+            const link = document.createElement('a');
+            link.href = imgData;
+            link.download = 'outlier_plot.png';
+            link.click();
+        }
+
+
+
+  function togglePreviewSection() {
+    document.getElementById('previewSection').style.display = 'block';
+    document.getElementById('outlierSection').style.display = 'none';
+  }
+
+  function toggleOutlierSection() {
+    document.getElementById('outlierSection').style.display = 'block';
+    document.getElementById('previewSection').style.display = 'none';
+  }
 
     function uploadFile() {
       const fileInput = document.getElementById('fileInput').files[0];

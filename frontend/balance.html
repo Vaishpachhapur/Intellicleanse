@@ -60,7 +60,8 @@
   <!-- Upload File -->
   <h3>Upload a Dataset:</h3>
   <form id="uploadForm" enctype="multipart/form-data">
-    <input type="file" id="fileInput" accept=".csv, .xlsx" required>
+    <label for="fileInput">Choose a file:</label>
+    <input type="file" id="fileInput" accept=".csv, .xlsx" required title="Upload a CSV or Excel file">
     <button type="submit">Upload</button>
   </form>
 
