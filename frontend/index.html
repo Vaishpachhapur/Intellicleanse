@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intellicleanse</title>
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.8;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Header */
+header {
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    padding: 15px 40px;
+}
+
+header h1 a {
+    color: aliceblue;
+    font-size: 60px;
+    text-decoration: none;
+}
+
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        /* Navigation */
+        nav ul {
+            list-style: none;
+            margin: 40px;
+            padding: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-left: 100px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #ffeb3b;
+        }
+
+       /* Hero Section - Full-Screen Background */
+.hero-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: url('intro-bg.jpg') center/cover no-repeat;
+    z-index: -1; /* Ensures content appears above the background */
+}
+
+        /* Main Content */
+        main {
+            text-align: center;
+            margin-top: 700px ;
+            padding: 50px;
+            /* background: rgba(255, 255, 255, 0.95); */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            /* -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(15px); */
+        }
+
+        h2 {
+            color: #005a9e;
+            font-size: 2.5rem;
+            margin-top: 40px; /* Spacing from the hero section */
+        }
+
+        p {
+            font-size: 1.4rem;
+            color: #444;
+        }
+
+        /* Facts & Tips Section */
+        .facts, .tips {
+            padding: 25px;
+            border-left: 6px solid;
+            margin-top: 35px;
+            border-radius: 10px;
+            text-align: left;
+            font-size: 1.3rem;
+        }
+
+        .facts {
+            background-color: #d9f1ff;
+            border-left-color: #005a9e;
+        }
+
+        .tips {
+            background-color: #fff3e0;
+            border-left-color: #ff9800;
+        }
+
+        .facts h3, .tips h3 {
+            font-size: 2rem;
+        }
+
+        .facts ul, .tips ul {
+            list-style: none;
+            padding-left: 25px;
+        }
+
+        .facts li, .tips li {
+            margin: 12px 0;
+            position: relative;
+        }
+
+        /* Footer */
+        footer {
+            /* background: rgba(0, 90, 158, 0.8); */
+            /* color: white; */
+            text-align: center;
+            padding: 20px;
+            font-size: 1.3rem;
+            margin-top: auto;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+            }
+
+            nav ul {
+                padding-top: 10px;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            nav ul li {
+                margin: 10px 0;
+            }
+
+            main {
+                width: 95%;
+                padding: 30px;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .facts, .tips {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><a href="index.html" style="color: aliceblue; font-size: 60px;">Intellicleanse</a></h1>
+        <nav>
+            <ul>
+                <li><a href="index.html" style="font-size: large;">Home</a></li>
+                <li><a href="about.html" style="font-size: large;">About</a></li>
+                <li><a href="login.html" style="font-size: large;">Login</a></li>
+                <li><a href="signup.html" style="font-size: large;">Signup</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Image Section -->
+    <div class="hero-image">
+        <!-- <img src="intro-bg.jpg" alt="image"> -->
+    </div>
+
+    <main>
+       
+        <!-- Interesting Facts Section -->
+        <section class="facts">
+            <center><h1 style="border: #d9f1ff; font-weight: bolder;">WELCOME TO INTELLICLEANSE </h1></center>
+            <center><h1 style="border: #d9f1ff; font-weight: bolder;">ONE STOP SOLUTION FOR DATA CLEANSING  </h1></center>
+            <h3>Interesting Facts About Data Cleansing</h3>
+            <ul>
+                <li>Poor data quality costs businesses an average of 15-25% of revenue annually.</li>
+                <li>80% of a data scientist’s time is spent on data cleaning and preparation.</li>
+                <li>Duplicate data can lead to incorrect analysis and decision-making.</li>
+                <li>AI and machine learning are now improving data cleansing efficiency.</li>
+            </ul>
+        </section>
+
+        <!-- Data Cleansing Tips Section -->
+        <section class="tips">
+            <h3>Tips for Effective Data Cleansing</h3>
+            <ul>
+                <li>Always standardize data formats to maintain consistency.</li>
+                <li>Remove duplicate entries to avoid redundant information.</li>
+                <li>Use automated tools to detect and correct missing values.</li>
+                <li>Validate data against known patterns or reference data.</li>
+                <li>Regularly update and maintain databases to ensure accuracy.</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Intellicleanse. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>

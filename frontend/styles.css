@@ -1,0 +1,147 @@
+/* General Styles */
+body {
+    font-family: 'Times New Roman', Times, serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    line-height: 1.8;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+    background: url('intro-bg.jpg') center/cover no-repeat;
+}
+
+/* Header */
+header {
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    padding: 15px 40px;
+}
+
+header h1 a {
+    color: aliceblue;
+    font-size: 60px;
+    text-decoration: none;
+}
+
+/* Navigation */
+nav ul {
+    list-style: none;
+    margin: 40px;
+    padding: 0;
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 100px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    font-size: 1.2rem;
+    transition: color 0.3s;
+}
+
+nav ul li a:hover {
+    color: #ffeb3b;
+}
+
+/* Main Content */
+main {
+    text-align: center;
+    margin-top: 150px;
+    padding: 50px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Forms */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    max-width: 400px;
+    margin: 50px auto;
+}
+
+input {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1.1rem;
+}
+
+button {
+    width: 50%;
+    padding: 10px;
+    background-color: #005a9e;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #003f6b;
+}
+
+/* Footer */
+footer {
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 1.3rem;
+    margin-top: auto;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav ul li {
+        margin: 10px 0;
+    }
+
+    main {
+        width: 95%;
+        padding: 30px;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+}

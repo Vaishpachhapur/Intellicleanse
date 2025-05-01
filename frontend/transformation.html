@@ -1,0 +1,419 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Transformation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            background-color: #ecf0f1;
+        }
+
+        nav {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            padding-top: 30px;
+            position: fixed;
+            height: 100vh;
+            transition: 0.3s;
+        }
+
+        nav a {
+            display: block;
+            color: white;
+            padding: 15px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: #34495e;
+        }
+
+        .content {
+            margin-left: 260px;
+            padding: 20px;
+            width: calc(100% - 260px);
+            background-color: white;
+        }
+
+        .content h1 {
+            color: #2c3e50;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #34495e;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav id="sidebar">
+        <a href="upload.html">Data Upload, Preview, and Profiling</a>
+        <a href="cleaning.html">Redundancy and Consistency Cleaning</a>
+        <a href="outlier.html">Outlier Detection and Management</a>
+        <a href="datastandardization.html">Data Standardization and Validation</a>
+        <a href="transformation.html" class="active">Automated Data Transformation Pipelines</a>
+        <a href="profile.html">Profile</a>
+        <a href="index.html">Logout</a>
+    </nav>
+
+    <div class="content">
+        <h1>Automated Data Transformation Pipelines</h1>
+        
+        <label for="fileInput">Upload File:</label>
+        <input type="file" id="fileInput" title="Select a file to upload" />
+        <button onclick="uploadFile()">Upload File</button>
+        <button id="fetchLatestFile">Get Latest File</button>
+            
+        <div id="result"></div>
+        
+        <table id="data-table" style="display: none;">
+            <thead id="table-head"></thead>
+            <tbody id="table-body"></tbody>
+        </table>
+    </div>
+
+    <script>
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            
+            if (fileInput.files.length === 0) {
+                alert("Please select a file to upload.");
+                return; // Exit if no file is selected
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch('http://localhost:5000/upload', { // Change URL as needed
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                alert(result.message || "File uploaded successfully.");
+                
+                // Automatically trigger data transformation after successful upload
+                transformData();
+                
+            } catch (error) {
+                console.error("Error uploading file:", error);
+                alert("Error uploading file.");
+            }
+        }
+
+        async function transformData() {
+    try {
+        const response = await fetch('http://localhost:5000/transform_data', { method: 'POST' });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Error response:", errorText);
+            alert("Error: " + errorText);
+            return;
+        }
+
+        // Fetch the latest file
+        document.getElementById("fetchLatestFile").addEventListener("click", function() {
+            fetch("http://localhost:5000/get_latest_file")
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById("filePreviewTable").innerHTML = "<tr><td>Error: " + data.error + "</td></tr>";
+                } else {
+                    const table = document.getElementById("filePreviewTable");
+                    table.innerHTML = "";
+                    const keys = Object.keys(data.preview[0]);
+                    let headerRow = "<tr>";
+                    keys.forEach(key => {
+                        headerRow += `<th>${key}</th>`;
+                    });
+                    headerRow += "</tr>";
+                    table.innerHTML += headerRow;
+
+                    data.preview.forEach(row => {
+                        let rowHTML = "<tr>";
+                        keys.forEach(key => {
+                            rowHTML += `<td>${row[key]}</td>`;
+                        });
+                        rowHTML += "</tr>";
+                        table.innerHTML += rowHTML;
+                    });
+                }
+            })
+            .catch(error => console.error("Error fetching latest file:", error));
+        });
+
+
+        const result = await response.json();
+        document.getElementById("result").innerText = result.message || "Transformation Completed.";
+
+        if (result.transformed_data && result.transformed_data.length > 0) {
+            displayTable(result.transformed_data);
+        }
+    } catch (error) {
+        console.error("Error transforming data:", error);
+        alert("Failed to transform data.");
+    }
+}
+
+
+        function displayTable(data) {
+            const table = document.getElementById("data-table");
+            const thead = document.getElementById("table-head");
+            const tbody = document.getElementById("table-body");
+
+            thead.innerHTML = "";
+            tbody.innerHTML = "";
+
+            const headers = Object.keys(data[0]);
+            
+            let headerRow = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "</tr>";
+            
+            thead.innerHTML = headerRow;
+
+            data.forEach(row => {
+                let rowData = "<tr>" + headers.map(h => `<td>${row[h]}</td>`).join('') + "</tr>";
+                tbody.innerHTML += rowData;
+            });
+
+            table.style.display = "table";
+        }
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Transformation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            background-color: #ecf0f1;
+        }
+        nav {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            padding-top: 30px;
+            position: fixed;
+            height: 100vh;
+            transition: 0.3s;
+        }
+        nav a {
+            display: block;
+            color: white;
+            padding: 15px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        nav a:hover, nav a.active {
+            background-color: #34495e;
+        }
+        .content {
+            margin-left: 260px;
+            padding: 20px;
+            width: calc(100% - 260px);
+            background-color: white;
+        }
+        .content h1 {
+            color: #2c3e50;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #34495e;
+        }
+        #insights {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        } 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            border: 2px solid black; /* Added table border */
+        }
+        th, td {
+            border: 2px solid black; /* Increased border thickness */
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <nav id="sidebar">
+        <a href="balance.html">Balance</a>
+        <a href="upload.html">Data Upload, Preview, and Profiling</a>
+        <a href="cleaning.html">Redundancy and Consistency Cleaning</a>
+        <a href="outlier.html">Outlier Detection and Management</a>
+        <a href="datastandardization.html">Data Standardization and Validation</a>
+        <a href="transformation.html" class="active">Automated Data Transformation Pipelines</a>
+        <a href="profile.html">Profile</a>
+        <a href="index.html">Logout</a>
+    </nav>
+    <div class="content">
+        <h1>Automated Data Transformation Pipelines</h1>
+        
+        <label for="fileInput">Upload File:</label>
+        <input type="file" id="fileInput" />
+        <button onclick="uploadFile()">Upload File</button>
+        <button onclick="transformData()">Start Transformation</button>
+        <button onclick="downloadTableData()">Download Data</button>
+        <div id="result"></div>
+        <table id="data-table" style="display: none;">
+            <thead id="table-head"></thead>
+            <tbody id="table-body"></tbody>
+        </table>
+        
+        <!-- Insights Section -->
+        <div id="insights" style="display: none;">
+            <h3>Insights</h3>
+            <p id="insights-content">No insights available yet.</p>
+        </div>
+    </div>
+
+    <script>
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput.files.length === 0) {
+                alert("Please select a file to upload.");
+                return;
+            }
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            try {
+                const response = await fetch('http://localhost:5000/upload', { method: 'POST', body: formData });
+                const result = await response.json();
+                alert(result.message || "File uploaded successfully.");
+                transformData();
+            } catch (error) {
+                console.error("Error uploading file:", error);
+                alert("Error uploading file.");
+            }
+        }
+
+        async function transformData() {
+            try {
+                const response = await fetch('http://localhost:5000/transform_data', { method: 'POST' });
+                if (!response.ok) {
+                    alert("Error: " + await response.text());
+                    return;
+                }
+                const result = await response.json();
+                document.getElementById("result").innerText = result.message || "Transformation Completed.";
+                if (result.transformed_data && result.transformed_data.length > 0) {
+                    displayTable(result.transformed_data);
+                    displayInsights(result.insights);
+                }
+            } catch (error) {
+                console.error("Error transforming data:", error);
+                alert("Failed to transform data.");
+            }
+        }
+
+        function displayTable(data) {
+            const table = document.getElementById("data-table");
+            const thead = document.getElementById("table-head");
+            const tbody = document.getElementById("table-body");
+            thead.innerHTML = "";
+            tbody.innerHTML = "";
+            const headers = Object.keys(data[0]);
+            thead.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "</tr>";
+            data.forEach(row => {
+                tbody.innerHTML += "<tr>" + headers.map(h => `<td>${row[h]}</td>`).join('') + "</tr>";
+            });
+            table.style.display = "table";
+        }
+
+        function displayInsights(insights) {
+            if (!insights) return;
+            document.getElementById("insights").style.display = "block";
+            document.getElementById("insights-content").innerText = insights;
+        }
+
+        function downloadTableData() {
+        const table = document.getElementById("data-table");
+        if (!table || table.style.display === "none") {
+            alert("No data available to download.");
+            return;
+        }
+
+        let csv = [];
+        const rows = table.querySelectorAll("tr");
+
+        for (let row of rows) {
+            let cols = row.querySelectorAll("th, td");
+            let rowData = [];
+            cols.forEach(col => rowData.push(col.innerText));
+            csv.push(rowData.join(","));
+        }
+
+        const csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "table_data.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    </script>
+</body>
+</html>

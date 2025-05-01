@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Career Connect</title>
+    <style>
+        /* General Styles */
+body {
+    font-family: 'Times New Roman', Times, serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    line-height: 1.8;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+    background: url('intro-bg.jpg') center/cover no-repeat;
+}
+
+/* Header */
+header {
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    padding: 15px 40px;
+}
+
+header h1 a {
+    color: aliceblue;
+    font-size: 60px;
+    text-decoration: none;
+}
+
+/* Navigation */
+nav ul {
+    list-style: none;
+    margin: 40px;
+    padding: 0;
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 100px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    font-size: 1.2rem;
+    transition: color 0.3s;
+}
+
+nav ul li a:hover {
+    color: #ffeb3b;
+}
+
+/* Main Content */
+main {
+    text-align: center;
+    margin-top: 150px;
+    padding: 50px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Forms */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    max-width: 400px;
+    margin: 50px auto;
+}
+
+input {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1.1rem;
+}
+
+button {
+    width: 50%;
+    padding: 10px;
+    background-color: #005a9e;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #003f6b;
+}
+
+/* Footer */
+footer {
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 1.3rem;
+    margin-top: auto;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav ul li {
+        margin: 10px 0;
+    }
+
+    main {
+        width: 95%;
+        padding: 30px;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1><a href="index.html" style="color: aliceblue; font-size: 60px;">Intellicleanse</a></h1>
+        <nav>
+            <ul>
+                <li><a href="index.html" style="font-size: large;">Home</a></li>
+                <li><a href="about.html" style="font-size: large;">About</a></li>
+                <li><a href="login.html" style="font-size: large;">Login</a></li>
+                <li><a href="signup.html" style="font-size: large;">Signup</a></li>
+            </ul>
+        </nav>
+    </header>
+    <br/><br/>
+    <main>
+            
+            <h1>About Intellicleanse</h1>
+      
+          <p>
+              Welcome to <strong>Intellicleanse</strong>, your ultimate solution for efficient and intelligent data cleansing.
+              Our platform is designed to streamline the process of preparing raw datasets for analysis by addressing
+              common data quality issues such as missing values, duplicate entries, and inconsistencies.
+            </p>
+      
+            <h2>Our Mission</h2>
+            <p>
+              At Intellicleanse, our mission is to empower data analysts, researchers, and businesses with tools that simplify 
+              data preparation and enhance the accuracy of insights. We aim to make data-driven decision-making accessible to everyone.
+            </p>
+      
+            <h2>Key Features</h2>
+            <ul className="features-list">
+              <li>Effortless data upload and profiling</li>
+              <li>Advanced duplicate removal and missing value imputation</li>
+              <li>Outlier detection with interactive visualizations</li>
+              <li>Customizable cleaning rules for consistency</li>
+              <li>Collaborative cleaning with version control</li>
+              <li>Export options with detailed cleaning logs</li>
+              <li>AI-assisted data insights</li>
+            </ul>
+      
+            <h2>Get in Touch</h2>
+            <p>
+              Have questions or want to learn more? Reach out to us through our <a href="/contact">Contact</a> page. We'd love to hear from you!
+            </p>
+            </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

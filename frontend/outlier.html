@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outlier Detection and Visualization</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        /* Global and Sidebar Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            background-color: #ecf0f1;
+        }
+
+        nav {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            padding-top: 30px;
+            position: fixed;
+            height: 100vh;
+            transition: 0.3s;
+        }
+
+        nav a {
+            display: block;
+            color: white;
+            padding: 15px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: #34495e;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: white;
+            padding: 15px;
+            font-size: 16px;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background-color: #e74c3c;
+        }
+
+        /* Content Styles */
+        .content {
+            margin-left: 260px;
+            padding: 20px;
+            width: calc(100% - 260px);
+            background-color: white;
+        }
+
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #34495e;
+        }
+
+        /* Outlier Detection Section */
+        .table-container, .summary-container {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .menu-toggle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            background: #2c3e50;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+        }
+        .next-btn a {
+            text-decoration: none;
+            color: #f9f9f9;
+        }
+
+        /* Responsive Sidebar */
+        @media screen and (max-width: 768px) {
+            nav {
+                width: 0;
+                overflow: hidden;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                font-size: 20px;
+                cursor: pointer;
+                background: #2c3e50;
+                color: white;
+                padding: 5px 10px;
+                border: none;
+                border-radius: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <a href="balance.html">Balance</a>
+        <a href="upload.html" onclick="loadContent('upload.html')">Data Upload, Preview, and Profiling</a>
+        <a href="cleaning.html">Redundancy and Consistency Cleaning</a>
+        <a href="outlier.html" class="active">Outlier Detection and Management</a>
+        <a href="datastandardization.html">Data Standardization and Validation</a>
+        <a href="transformation.html">Automated Data Transformation Pipelines</a>
+        <a href="profile.html">Profile</a>
+        <a href="index.html">Logout</a>
+    </nav>
+
+    <!-- Content Section -->
+    <div class="content">
+        <h1>Outlier Detection and Management</h1>
+        
+        <!-- File Upload Form -->
+        <form id="uploadForm" enctype="multipart/form-data">
+            <label for="fileInput">Upload a CSV or Excel file:</label>
+            <input type="file" id="fileInput" name="file" accept=".csv, .xlsx" required>
+            <button type="submit">Upload File</button>
+        </form>
+        
+        <!-- Display Outlier Information and Visualization -->
+        <div id="outlierInfo" style="display:none;">
+            <h2>Outlier Detection Results</h2>
+            <p id="outlierCount"></p>
+            <h3>Visualizations:</h3>
+            <img id="outlierPlot" src="" alt="Outlier Visualization" />
+            <button id="downloadBtn" style="display:none;" onclick="downloadImage()">Download Visualization</button>
+        </div>
+        <button class="next-btn"><a href="datastandardization.html">NEXT</a></button>
+        
+
+    </div>
+
+    <script>
+        // Handle File Upload
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            let formData = new FormData();
+            formData.append('file', document.getElementById('fileInput').files[0]);
+
+            // Make sure to use the correct URL for your Flask server
+            axios.post('http://localhost:5000/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+                .then(response => {
+                    alert(response.data.message);
+                    getOutliers(); // Trigger outlier detection after file upload
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert('Error uploading the file!');
+                });
+        });
+
+        // Function to trigger outlier detection and show results
+        function getOutliers() {
+            axios.post('http://localhost:5000/outlier_detection')
+                .then(response => {
+                    document.getElementById('outlierCount').innerHTML = "Outliers detected: " + JSON.stringify(response.data.outliers);
+                    document.getElementById('outlierPlot').src = "data:image/png;base64," + response.data.plot;
+                    document.getElementById('outlierInfo').style.display = 'block';
+                    document.getElementById('downloadBtn').style.display = 'inline-block';
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert('Error detecting outliers!');
+                });
+        }
+
+        // Function to download the image
+        function downloadImage() {
+            const imgData = document.getElementById('outlierPlot').src;
+            const link = document.createElement('a');
+            link.href = imgData;
+            link.download = 'outlier_plot.png';
+            link.click();
+        }
+
+        function logout() {
+            fetch('/logout', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    window.location.href = '/login';
+                });
+        }
+
+        function toggleMenu() {
+            var sidebar = document.getElementById("sidebar");
+            if (sidebar.style.width === "250px") {
+                sidebar.style.width = "0";
+            } else {
+                sidebar.style.width = "250px";
+            }
+        }
+
+        function loadContent(url) {
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    document.querySelector('.content').innerHTML = html;
+                })
+                .catch(error => console.error('Error loading content:', error));
+        }
+    </script>
+</body>
+</html>

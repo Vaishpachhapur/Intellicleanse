@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup - Intellicleanse</title>
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <style>
+        /* General Styles */
+body {
+    font-family: 'Times New Roman', Times, serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    line-height: 1.8;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+    background: url('intro-bg.jpg') center/cover no-repeat;
+}
+
+/* Header */
+header {
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    padding: 15px 40px;
+}
+
+header h1 a {
+    color: aliceblue;
+    font-size: 60px;
+    text-decoration: none;
+}
+
+/* Navigation */
+nav ul {
+    list-style: none;
+    margin: 40px;
+    padding: 0;
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 100px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    font-size: 1.2rem;
+    transition: color 0.3s;
+}
+
+nav ul li a:hover {
+    color: #ffeb3b;
+}
+
+/* Main Content */
+main {
+    text-align: center;
+    margin-top: 150px;
+    padding: 50px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Forms */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    max-width: 400px;
+    margin: 50px auto;
+}
+
+input {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1.1rem;
+}
+
+button {
+    width: 50%;
+    padding: 10px;
+    background-color: #005a9e;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #003f6b;
+}
+
+/* Footer */
+footer {
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 1.3rem;
+    margin-top: auto;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav ul li {
+        margin: 10px 0;
+    }
+
+    main {
+        width: 95%;
+        padding: 30px;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1><a href="index.html" style="color: aliceblue; font-size: 60px;">Intellicleanse</a></h1>
+        <nav>
+            <ul>
+                <li><a href="index.html" style="font-size: large;">Home</a></li>
+                <li><a href="about.html" style="font-size: large;">About</a></li>
+                <li><a href="login.html" style="font-size: large;">Login</a></li>
+                <li><a href="signup.html" style="font-size: large;">Signup</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Signup Form -->
+     <br/>
+    <main>
+        <h2>Sign Up for Intellicleanse</h2>
+        <form id="signup-form">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Sign Up</button>
+        </form>
+    </main>
+
+    <!-- JavaScript for form submission -->
+    <script>
+        document.getElementById("signup-form").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById("username").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            console.log("Sending data:", { username, email, password });
+
+            try {
+                const response = await fetch("http://127.0.0.1:5000/signup", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, email, password })
+                });
+
+                const result = await response.json();
+                console.log("Response received:", result);
+
+                if (response.ok) {
+                    alert(result.message);
+                    window.location.href = "login.html";
+                } else {
+                    alert(result.error || "Signup failed");
+                }
+            } catch (error) {
+                console.error("Error during signup:", error);
+                alert("An error occurred. Please try again.");
+            }
+        });
+    </script>
+</body>
+</html>

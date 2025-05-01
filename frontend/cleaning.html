@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redundancy and Consistency Cleaning</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+        /* Global and Sidebar Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            background-color: #ecf0f1;
+        }
+        nav {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            padding-top: 30px;
+            position: fixed;
+            height: 100vh;
+            transition: 0.3s;
+        }
+        nav a {
+            display: block;
+            color: white;
+            padding: 15px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        nav a:hover,
+        nav a.active {
+            background-color: #34495e;
+        }
+        .logout-btn {
+            background: none;
+            border: none;
+            color: white;
+            padding: 15px;
+            font-size: 16px;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+        .logout-btn:hover {
+            background-color: #e74c3c;
+        }
+
+        /* Content Styles */
+        .content {
+            margin-left: 260px;
+            padding: 20px;
+            width: calc(100% - 260px);
+            background-color: white;
+        }
+        h2,
+        h3 {
+            color: #2c3e50;
+        }
+        button {
+            padding: 10px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #34495e;
+        }
+        .table-container,
+        .summary-container {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        canvas {
+            margin-top: 20px;
+        }
+        .next-btn a {
+            text-decoration: none;
+            color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <nav>
+        <a href="balance.html">Balance</a>
+        <a href="upload.html" class="active">Data Upload, Preview, and Profiling</a>
+        <a href="cleaning.html">Redundancy and Consistency Cleaning</a>
+        <a href="outlier.html">Outlier Detection and Management</a>
+        <a href="datastandardization.html">Data Standardization and Validation</a>
+        <a href="transformation.html">Automated Data Transformation Pipelines</a>
+        <a href="profile.html">Profile</a>
+        <a href="index.html">Logout</a>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="content">
+        <h2>Redundancy and Consistency Cleaning</h2>
+
+        <!-- Upload New File Section -->
+        <h3>Upload a New File:</h3>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" id="fileInput" name="file" accept=".csv, .xlsx" required title="Choose a file to upload" />
+            <button type="submit">Upload File</button>
+        </form>
+
+        <button id="fetchLatestFile">Get Latest File</button>
+
+        <!-- File Preview Section -->
+        <h3>Latest File Preview:</h3>
+        <div class="table-container">
+            <table id="filePreviewTable"></table>
+        </div>
+
+        <!-- Cleaning Form Section -->
+        <h3>Data Cleaning Options:</h3>
+        <form id="cleaningForm">
+            <label for="missing_values">Handle Missing Values:</label>
+            <select id="missing_values" name="missing_values">
+                <option value="mean">Replace with Mean</option>
+                <option value="median">Replace with Median</option>
+                <option value="custom">Custom Value</option>
+                <option value="flag">Flag as "MISSING"</option>
+            </select>
+            <br>
+
+            <input type="text" id="custom_value" name="custom_value" placeholder="Enter custom value (if selected)">
+            <br>
+
+            <button type="submit">Clean Data</button>
+        </form>
+
+        <!-- Cleaning Report Section -->
+        <h3>Cleaning Report:</h3>
+        <pre id="report"></pre>
+
+        <!-- Cleaned Data Preview Section -->
+        <h3>Cleaned Data:</h3>
+        <div class="table-container">
+            <table id="cleanedDataTable"></table>
+        </div>
+
+        <!-- Insights Section -->
+        <div class="summary-container" id="insights">
+            <h3>Insights about Cleaned Data:</h3>
+            <p id="dataInsights">Loading insights...</p>
+        </div>
+
+        <button class="next-btn"><a href="outlier.html">NEXT</a>
+        </button>
+    </div>
+
+    <script>
+        function logout() {
+            fetch('/logout', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    window.location.href = '/login';
+                });
+        }
+
+        // Handle file upload
+        document.getElementById("uploadForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const fileInput = document.getElementById("fileInput");
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            fetch("http://localhost:5000/upload", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Error: " + data.error);
+                } else {
+                    alert("File uploaded successfully!");
+                    console.log(data);  // Optionally display the data (like preview and profiling)
+                }
+            })
+            .catch(error => {
+                console.error("Error uploading file:", error);
+            });
+        });
+
+        // Fetch the latest file
+        document.getElementById("fetchLatestFile").addEventListener("click", function() {
+            fetch("http://localhost:5000/get_latest_file")
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById("filePreviewTable").innerHTML = "<tr><td>Error: " + data.error + "</td></tr>";
+                } else {
+                    const table = document.getElementById("filePreviewTable");
+                    table.innerHTML = "";
+                    const keys = Object.keys(data.preview[0]);
+                    let headerRow = "<tr>";
+                    keys.forEach(key => {
+                        headerRow += `<th>${key}</th>`;
+                    });
+                    headerRow += "</tr>";
+                    table.innerHTML += headerRow;
+
+                    data.preview.forEach(row => {
+                        let rowHTML = "<tr>";
+                        keys.forEach(key => {
+                            rowHTML += `<td>${row[key]}</td>`;
+                        });
+                        rowHTML += "</tr>";
+                        table.innerHTML += rowHTML;
+                    });
+                }
+            })
+            .catch(error => console.error("Error fetching latest file:", error));
+        });
+
+        // Handle cleaning data submission
+        document.getElementById("cleaningForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let formData = new FormData();
+            formData.append("missing_values", document.getElementById("missing_values").value);
+            formData.append("custom_value", document.getElementById("custom_value").value);
+
+            fetch("http://localhost:5000/clean_data", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("report").innerText = JSON.stringify(data, null, 2);
+
+                // Populate cleaned data table
+                const cleanedTable = document.getElementById("cleanedDataTable");
+                cleanedTable.innerHTML = "";
+                const cleanedKeys = Object.keys(data.cleaned_data[0]);
+                let cleanedHeaderRow = "<tr>";
+                cleanedKeys.forEach(key => {
+                    cleanedHeaderRow += `<th>${key}</th>`;
+                });
+                cleanedHeaderRow += "</tr>";
+                cleanedTable.innerHTML += cleanedHeaderRow;
+
+                data.cleaned_data.forEach(row => {
+                    let rowHTML = "<tr>";
+                    cleanedKeys.forEach(key => {
+                        rowHTML += `<td>${row[key]}</td>`;
+                    });
+                    rowHTML += "</tr>";
+                    cleanedTable.innerHTML += rowHTML;
+                });
+
+                // Update insights
+                document.getElementById("dataInsights").innerText = data.insights;
+            })
+            .catch(error => console.error("Error cleaning data:", error));
+        });
+    </script>
+
+</body>
+</html>
