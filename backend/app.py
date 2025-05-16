@@ -484,60 +484,60 @@ def transform_data():
         return jsonify({"error": str(e)}), 500
 
 # # balance check function
-# @app.route('/check_balance', methods=['POST'])
-# def check_balance():
-#     try:
-#         data = request.get_json()
-#         file_id = data.get("file_id")
+@app.route('/check_balance', methods=['POST'])
+def check_balance():
+    try:
+        data = request.get_json()
 
-#         if not file_id:
-#             return jsonify({"error": "No file_id provided in request."}), 400
+        filename = data.get("filename")
+        if not filename:
+            return jsonify({"error": "No filename provided in request."}), 400
 
-#         file_record = File.query.get(file_id)
-#         if not file_record:
-#             return jsonify({"error": "Dataset not found with the given file_id."}), 404
+        file_record = File.query.filter_by(name=filename).first()
+        if not file_record:
+            return jsonify({"error": "Dataset not found with the given filename."}), 404
+        print("Queried file_record:", file_record)
 
-#         filename = file_record.name
-#         file_data = file_record.data
+        file_data = file_record.data
 
-#         # Load file into DataFrame
-#         if filename.endswith('.csv'):
-#             df = pd.read_csv(io.BytesIO(file_data))
-#         elif filename.endswith('.xlsx'):
-#             df = pd.read_excel(io.BytesIO(file_data))
-#         else:
-#             return jsonify({"error": "Unsupported file format"}), 400
+        # Load file into DataFrame
+        if filename.endswith('.csv'):
+            df = pd.read_csv(io.BytesIO(file_data))
+        elif filename.endswith('.xlsx'):
+            df = pd.read_excel(io.BytesIO(file_data))
+        else:
+            return jsonify({"error": "Unsupported file format"}), 400
 
-#         # Check if dataset is empty
-#         if df.empty:
-#             return jsonify({"error": "The uploaded file is empty."}), 400
+        # Check if dataset is empty
+        if df.empty:
+            return jsonify({"error": "The uploaded file is empty."}), 400
 
-#         # Detect target column (categorical or low unique values)
-#         potential_targets = df.select_dtypes(include=['object', 'category']).columns.tolist()
-#         if not potential_targets:
-#             potential_targets = [col for col in df.columns if df[col].nunique() <= 10]
+        # Detect target column (categorical or low unique values)
+        potential_targets = df.select_dtypes(include=['object', 'category']).columns.tolist()
+        if not potential_targets:
+            potential_targets = [col for col in df.columns if df[col].nunique() <= 10]
 
-#         if not potential_targets:
-#             return jsonify({"error": "No suitable target column found to check for balance."}), 400
+        if not potential_targets:
+            return jsonify({"error": "No suitable target column found to check for balance."}), 400
 
-#         target_col = potential_targets[-1]  # Choose the last one
-#         class_counts = df[target_col].value_counts()
-#         total = class_counts.sum()
-#         balance_ratio = (class_counts / total).round(3).to_dict()
+        target_col = potential_targets[-1]  # Choose the last one
+        class_counts = df[target_col].value_counts()
+        total = class_counts.sum()
+        balance_ratio = (class_counts / total).round(3).to_dict()
 
-#         # Determine if dataset is balanced (no single class dominates > 70%)
-#         is_balanced = all((count / total) <= 0.7 for count in class_counts)
+        # Determine if dataset is balanced (no single class dominates > 70%)
+        is_balanced = all((count / total) <= 0.7 for count in class_counts)
 
-#         return jsonify({
-#             "message": "Balance check complete.",
-#             "target_column": target_col,
-#             "class_distribution": balance_ratio,
-#             "is_balanced": is_balanced
-#         })
+        return jsonify({
+            "message": "Balance check complete.",
+            "target_column": target_col,
+            "class_distribution": balance_ratio,
+            "is_balanced": is_balanced
+        })
 
-#     except Exception as e:
-#         print("Error in /check_balance:", traceback.format_exc())
-#         return jsonify({"error": str(e)}), 500
+    except Exception as e:
+        print("Error in /check_balance:", traceback.format_exc())
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/save_collaboration', methods=['POST'])
 def save_collaboration():

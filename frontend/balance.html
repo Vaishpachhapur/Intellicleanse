@@ -73,97 +73,122 @@
   <div id="resultContainer" class="result">
     <h3>Balance Status:</h3>
     <p id="balanceResult">Click the button to check dataset balance.</p>
-    <p id="balanceDetails"></p>
+    <!-- <p id="balanceDetails">The dataset contains 2,938 rows and 22 columns</p> -->
     <canvas id="balanceChart"></canvas>
   </div>
 </div>
 
-<script>
+<!-- <script>
   let selectedFileId = null;
 
   // Handle File Upload
   document.getElementById("uploadForm").addEventListener("submit", function (event) {
-    event.preventDefault();
+  event.preventDefault();
 
-    const fileInput = document.getElementById("fileInput");
-    if (!fileInput.files.length) {
-      alert("Please select a file to upload.");
-      return;
+  const fileInput = document.getElementById("fileInput");
+  if (!fileInput.files.length) {
+    alert("Please select a file to upload.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", fileInput.files[0]);
+
+  fetch("http://localhost:5000/upload", {
+    method: "POST",
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.error) {
+      alert("Upload failed: " + data.error);
+      console.error("Upload Error:", data.error);
+    } else {
+      alert("File uploaded successfully!");
+      selectedFileId = data.file_id;
+      localStorage.setItem("uploadedFileId", selectedFileId);
     }
-
-    const formData = new FormData();
-    formData.append("file", fileInput.files[0]);
-
-    fetch("http://localhost:5000/upload", {
-      method: "POST",
-      body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.error) {
-        alert("Upload failed: " + data.error);
-        console.error("Upload Error:", data.error);
-      } else {
-        alert("File uploaded successfully!");
-        selectedFileId = data.file_id;
-        localStorage.setItem("uploadedFileId", selectedFileId);
-      }
-    })
-    .catch(error => {
-      console.error("Upload failed:", error);
-      alert("Something went wrong while uploading.");
-    });
+  })
+  .catch(error => {
+    console.error("Upload failed:", error);
+    alert("Something went wrong while uploading.");
   });
+});
 
-  // Check Dataset Balance
-  function checkBalance() {
-    selectedFileId = localStorage.getItem("uploadedFileId");
-    if (!selectedFileId) {
-      alert("Please upload a file first.");
-      return;
-    }
+function checkBalance() {
+  const selectedFileName = localStorage.getItem("uploadedFileName");
+  if (!selectedFileName) {
+    alert("File name not found. Please upload or select a file.");
+    return;
+  }
 
-    fetch("http://localhost:5000/check_balance", {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ file_id: selectedFileId })
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.error) {
+  fetch("http://localhost:5000/check_balance", {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ filename: selectedFileName })
+  })
+  .then(response => response.json())
+  .then(data => {
+    // Handle response (same as before)
+    if (data.error) {
         document.getElementById("balanceResult").textContent = "Error: " + data.error;
         document.getElementById("balanceResult").className = "imbalanced";
         return;
       }
+  })
+  .catch(error => {
+    console.error("Check balance error:", error);
+  });
+}
 
-      const isBalanced = data.is_balanced;
-      const targetColumn = data.target_column;
-      const classDistribution = data.class_distribution;
+  // Check Dataset Balance
+//   function checkBalance() {
+//     selectedFileId = localStorage.getItem("uploadedFileId");
+//     if (!selectedFileId) {
+//       alert("Please upload a file first.");
+//       return;
+//     }
 
-      const resultText = isBalanced
-        ? "✅ The dataset is balanced."
-        : "⚠️ The dataset is imbalanced.";
-      const resultClass = isBalanced ? "balanced" : "imbalanced";
+//     fetch("http://localhost:5000/check_balance", {
+//       method: "POST",
+//       headers: {
+//         'Content-Type': 'application/json'
+//       },
+//       body: JSON.stringify({ file_id: selectedFileId })
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//       if (data.error) {
+//         document.getElementById("balanceResult").textContent = "Error: " + data.error;
+//         document.getElementById("balanceResult").className = "imbalanced";
+//         return;
+//       }
 
-      document.getElementById("balanceResult").textContent = resultText;
-      document.getElementById("balanceResult").className = resultClass;
+//       const isBalanced = data.is_balanced;
+//       const targetColumn = data.target_column;
+//       const classDistribution = data.class_distribution;
 
-      const details = Object.entries(classDistribution)
-        .map(([label, value]) => `${label}: ${(value * 100).toFixed(2)}%`)
-        .join("<br>");
-      document.getElementById("balanceDetails").innerHTML =
-        `<strong>Target Column:</strong> ${targetColumn}<br><br>${details}`;
+//       const resultText = isBalanced
+//   ? "✅ The dataset is balanced."
+//   : "⚠️ The dataset is imbalanced.";
+// const resultClass = isBalanced ? "balanced" : "imbalanced";
 
-      drawBalanceChart(classDistribution);
-    })
-    .catch(error => {
-      console.error("Check balance error:", error);
-      document.getElementById("balanceResult").textContent = "Error checking balance.";
-      document.getElementById("balanceResult").className = "imbalanced";
-    });
-  }
+// const reason = "A dataset is considered balanced if no class dominates more than 70% of the data.";
+
+// document.getElementById("balanceResult").textContent = resultText;
+// document.getElementById("balanceResult").className = resultClass;
+
+// document.getElementById("balanceDetails").innerHTML = reason;
+
+//     })
+//     .catch(error => {
+//       console.error("Check balance error:", error);
+//       document.getElementById("balanceResult").textContent = "Error checking balance.";
+//       document.getElementById("balanceResult").className = "imbalanced";
+//     });
+//   }
 
   function drawBalanceChart(classDistribution) {
     const ctx = document.getElementById("balanceChart").getContext("2d");
@@ -197,7 +222,7 @@
       }
     });
   }
-</script>
+</script> -->
 
 </body>
 </html>
